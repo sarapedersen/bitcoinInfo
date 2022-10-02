@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import _ from 'lodash'
+import { Table } from "react-bootstrap"
 
 const pageSize = 20
 
-function Table() {
+function InfoTable() {
     const [info, setInfo] = useState()
     const [paginatedInfo, setPaginatedInfo] = useState()
     const [currentPage, setcurrentPage] = useState(1)
@@ -29,12 +30,12 @@ function Table() {
     }
 
     return (
-        <div>
+        <div className="w-50">
             {!paginatedInfo ? ("nothing fetched") : (
-                <table className="table">
+                <Table striped bordered className="min-w-max">
                 <thead>
                     <tr>
-                        <th>Time</th>
+                        <th>Date</th>
                         <th>High</th>
                         <th>Low</th>
                         <th>Open</th>
@@ -44,7 +45,7 @@ function Table() {
                     {
                         paginatedInfo.map((current, index) => (
                             <tr key={index}>
-                                <td>{current.time}</td>
+                                <td>{new Date(current.time*1000).toLocaleDateString("no-NO", {month: "long", day: "numeric", year: "numeric"})}</td>
                                 <td>{current.high}</td>
                                 <td>{current.low}</td>
                                 <td>{current.open}</td>
@@ -52,13 +53,13 @@ function Table() {
                         ))
                     }
                 </tbody>
-            </table>
+            </Table>
             )}
             <nav className="d-flex justify-content-center">
                 <ul className="pagination">
                     {
                         pages.map((page) => (
-                            <li className={
+                            <li key={page} className={
                                 page === currentPage? "page-item active": "page-item"
                             }><p className="page-link btn" onClick={() => pagination(page)}>{page}</p></li>
                         ))
@@ -69,4 +70,4 @@ function Table() {
     )
 }
 
-export default Table
+export default InfoTable
