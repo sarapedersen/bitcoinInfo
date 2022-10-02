@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import _ from 'lodash'
 
 const pageSize = 20
 
@@ -14,15 +15,22 @@ function Table() {
                 const data = res.data.Data.Data
                 // console.log(data)
                 setInfo(data)
-                // setPaginatedInfo(data.slice(0).take(pageSize).value())
+                setPaginatedInfo(_(data).slice(0).take(pageSize).value())
             })
     }, [])
     
     const pages = [1, 2, 3, 4, 5]
 
+    function pagination(pageNo) {
+        setcurrentPage(pageNo)
+        const startIndex = (pageNo-1)*pageSize
+        const paginatedInfo = _(info).slice(startIndex).take(pageSize).value()
+        setPaginatedInfo(paginatedInfo)
+    }
+
     return (
         <div>
-            {!info ? ("nothing fetched") : (
+            {!paginatedInfo ? ("nothing fetched") : (
                 <table className="table">
                 <thead>
                     <tr>
@@ -34,7 +42,7 @@ function Table() {
                 </thead>
                 <tbody>
                     {
-                        info.map((current, index) => (
+                        paginatedInfo.map((current, index) => (
                             <tr key={index}>
                                 <td>{current.time}</td>
                                 <td>{current.high}</td>
@@ -48,11 +56,13 @@ function Table() {
             )}
             <nav className="d-flex justify-content-center">
                 <ul className="pagination">
-                    <li className="page-link">1</li>
-                    <li className="page-link">2</li>
-                    <li className="page-link">3</li>
-                    <li className="page-link">4</li>
-                    <li className="page-link">5</li>
+                    {
+                        pages.map((page) => (
+                            <li className={
+                                page === currentPage? "page-item active": "page-item"
+                            }><p className="page-link btn" onClick={() => pagination(page)}>{page}</p></li>
+                        ))
+                    }
                 </ul>
             </nav>
         </div>
