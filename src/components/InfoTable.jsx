@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import _ from 'lodash'
-import { Table } from "react-bootstrap"
+import cntl from 'cntl'
 
 const pageSize = 20
 
@@ -19,49 +19,49 @@ function InfoTable() {
                 setPaginatedInfo(_(data).slice(0).take(pageSize).value())
             })
     }, [])
-    
+
     const pages = [1, 2, 3, 4, 5]
 
     function pagination(pageNo) {
         setcurrentPage(pageNo)
-        const startIndex = (pageNo-1)*pageSize
+        const startIndex = (pageNo - 1) * pageSize
         const paginatedInfo = _(info).slice(startIndex).take(pageSize).value()
         setPaginatedInfo(paginatedInfo)
     }
 
     return (
-        <div className="w-50">
+        <div className="flex flex-col mt-8 mx-auto">
             {!paginatedInfo ? ("nothing fetched") : (
-                <Table striped bordered className="min-w-max">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>High</th>
-                        <th>Low</th>
-                        <th>Open</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        paginatedInfo.map((current, index) => (
-                            <tr key={index}>
-                                <td>{new Date(current.time*1000).toLocaleDateString("no-NO", {month: "long", day: "numeric", year: "numeric"})}</td>
-                                <td>{current.high}</td>
-                                <td>{current.low}</td>
-                                <td>{current.open}</td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </Table>
+                <table className="min-w-fit divide-y divide-gray-200 border">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className={headingCN}>Date</th>
+                            <th className={headingCN}>High</th>
+                            <th className={headingCN}>Low</th>
+                            <th className={headingCN}>Open</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {
+                            paginatedInfo.map((current, index) => (
+                                <tr key={index}>
+                                    <td className={dataCN}>{new Date(current.time * 1000).toLocaleDateString("no-NO", { month: "long", day: "numeric", year: "numeric" })}</td>
+                                    <td className={dataCN}>$ {current.high}</td>
+                                    <td className={dataCN}>$ {current.low}</td>
+                                    <td className={dataCN}>$ {current.open}</td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
             )}
-            <nav className="d-flex justify-content-center">
-                <ul className="pagination">
+            <nav className="m-auto">
+                <ul className="flex m-4">
                     {
                         pages.map((page) => (
                             <li key={page} className={
-                                page === currentPage? "page-item active": "page-item"
-                            }><p className="page-link btn" onClick={() => pagination(page)}>{page}</p></li>
+                                page === currentPage ? (`bg-orange-300 ${pagelinkCN}`) : `bg-gray-500 ${pagelinkCN}`}
+                                onClick={() => pagination(page)}>{page}</li>
                         ))
                     }
                 </ul>
@@ -70,4 +70,29 @@ function InfoTable() {
     )
 }
 
+const headingCN = cntl`
+    px-10
+    py-2 
+    text-xs 
+    font-bold 
+    text-gray-500
+    `
+
+const dataCN = cntl`
+    px-10
+    py-2
+    text-xs
+    text-left
+    text-gray-800
+    `
+
+const pagelinkCN = cntl`
+    text-white
+    px-4
+    py-2 
+    mx-1 
+    rounded-full
+    cursor-pointer
+    text-sm
+    `
 export default InfoTable

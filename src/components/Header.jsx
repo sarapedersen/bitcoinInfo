@@ -1,17 +1,10 @@
 import React from 'react'
-import { Navbar, Container, NavbarBrand } from 'react-bootstrap'
 
 function Header() {
   return (
-    <div>
-        <Navbar bg="dark" variant="dark">
-        <Container>
-          <NavbarBrand d-flex>
-            <img src="/logo.svg" width="80" height="80" className="d-inline-block align-top" alt="bitcoin logo"/>
-            <h1>Bitcoin information</h1>
-          </NavbarBrand>
-        </Container>
-        </Navbar>
+    <div className="bg-gray-800 p-2 flex justify-center">
+        <img src="/logo.svg" width="80" height="80" alt="bitcoin logo"/>
+        <h1 className="text-orange-300 font-mono text-3xl m-10">Bitcoin Information</h1>
     </div>
   )
 }
