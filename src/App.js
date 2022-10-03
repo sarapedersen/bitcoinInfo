@@ -1,4 +1,3 @@
-import './App.css'
 import InfoTable from './components/InfoTable'
 import Header from './components/Header'
 
