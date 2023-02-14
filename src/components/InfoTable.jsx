@@ -2,32 +2,45 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import _ from 'lodash'
 import cntl from 'cntl'
+import Info from './Info'
 
 const pageSize = 20
 
 function InfoTable() {
-    const [info, setInfo] = useState()
+    const [info, setInfo] = useState([])
     const [paginatedInfo, setPaginatedInfo] = useState()
     const [currentPage, setcurrentPage] = useState(1)
+    const [loading, setLoading] = useState(true)
+    const [errorMessage, seterrorMessage] = useState(false)
 
     useEffect(() => {
         axios.get('https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&limit=100&api_key=8ae55d463e1bf8d38b4a502ca47512f9b1dec21533ad9af7acb993e8ba952bc2')
             .then(res => {
                 const data = res.data.Data.Data
-                // console.log(data)
                 setInfo(data)
-                setPaginatedInfo(_(data).slice(0).take(pageSize).value())
+                pagination(currentPage)
+                setLoading(false)
+                seterrorMessage(false)
+            })
+            .catch (error => {
+                setLoading(false)
+                seterrorMessage(true)
             })
     }, [])
 
-    const pages = [1, 2, 3, 4, 5]
+    const totalPages = Math.ceil(info.length/pageSize)
+    const pages = new Array(totalPages).fill(0)
 
-    function pagination(pageNo) {
+
+    async function pagination(pageNo) {
         setcurrentPage(pageNo)
         const startIndex = (pageNo - 1) * pageSize
         const paginatedInfo = _(info).slice(startIndex).take(pageSize).value()
         setPaginatedInfo(paginatedInfo)
     }
+
+    if (loading === true) return <Info text="Loading..."/>
+    if (errorMessage === true) return <Info text="En feil har oppstått"/>
 
     return (
         <div className="flex flex-col mt-8 mx-auto">
@@ -58,10 +71,10 @@ function InfoTable() {
             <nav className="m-auto">
                 <ul className="flex m-4">
                     {
-                        pages.map((page) => (
-                            <li key={page} className={
-                                page === currentPage ? (`bg-orange-300 ${pagelinkCN}`) : `bg-gray-500 ${pagelinkCN}`}
-                                onClick={() => pagination(page)}>{page}</li>
+                        pages.map((_, index) => (
+                            <li key={index} className={
+                                (index+1) === currentPage ? (`bg-orange-300 ${pagelinkCN}`) : `bg-gray-500 ${pagelinkCN}`}
+                                onClick={() => pagination(index+1)}>{index+1}</li>
                         ))
                     }
                 </ul>
